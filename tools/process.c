@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "../loader.h"
 
 unsigned int FindProcessId(const char *processname)
 {

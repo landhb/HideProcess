@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "../loader.h"
 
 BOOL IsElevated( ) {
     BOOL fRet = FALSE;
