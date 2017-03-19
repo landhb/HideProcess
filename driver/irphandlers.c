@@ -1,5 +1,6 @@
 #include "driver.h"
 
+
 // Default IRP dispatcher, passthrough no action, return STATUS_SUCCESS
 NTSTATUS defaultIrpHandler(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP IrpMessage) {
 
@@ -17,5 +18,6 @@ NTSTATUS defaultIrpHandler(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP IrpMessag
 
 // Handler to recieve IRP request and call Rootkit functionality
 NTSTATUS IrpCallRootkit(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp) {
-
+	defaultIrpHandler(DeviceObject, Irp);
+	return(STATUS_SUCCESS);
 }
