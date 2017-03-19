@@ -3,10 +3,10 @@
 
 DRIVER_INITIALIZE DriverEntry;
 DRIVER_UNLOAD DriverUnload;
-EVT_WDF_DRIVER_DEVICE_ADD RootkitDeviceAdd;
 
 UNICODE_STRING  usDeviceName = RTL_CONSTANT_STRING(L"\\Device\\Rootkit");
 UNICODE_STRING  usSymbolicLink = RTL_CONSTANT_STRING(L"\\DosDevices\\Rootkit");
+
 
 // Driver Entry point
 NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath) {
@@ -57,6 +57,8 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 
 	return (status);
 }
+
+
 
 // Driver unload point
 VOID DriverUnload(_In_ PDRIVER_OBJECT DriverObject) {
