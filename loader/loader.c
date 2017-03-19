@@ -40,7 +40,7 @@ HANDLE install_driver() {
     // Declare variables
     SC_HANDLE hSCManager;   // Handle for SCM Database
     SC_HANDLE hService;     // Service handle 
-    HANDLE hDevice = NULL;         // Device handle for our driver
+    HANDLE hDevice;         // Device handle for our driver
     BOOLEAN b;              
     ULONG r;
 
@@ -130,7 +130,12 @@ HANDLE install_driver() {
 cleanup: 
     CloseServiceHandle(hService);
     CloseServiceHandle(hSCManager);
-    return hDevice;
+
+    if(hDevice){
+        return hDevice;
+    }
+
+    return NULL;
 
 }
 
