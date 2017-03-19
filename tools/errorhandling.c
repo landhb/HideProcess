@@ -1,4 +1,4 @@
-#include "../loader.h"
+#include "../loader/loader.h"
 
 //Returns the last Win32 error, in string format. Returns an empty string if there is no error.
 const char * GetLastErrorAsString()
