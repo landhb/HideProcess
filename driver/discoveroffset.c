@@ -20,12 +20,12 @@ ULONG find_eprocess_pid_offset() {
 		}
 	}
 
+	
 	/*
-	Now go through EPROCESS structure and look for the PID
+	Go through the EPROCESS structure and look for the PID
 	we can start at 0x20 because UniqueProcessId should
 	not be in the first 0x20 bytes,
 	also we should stop after 0x200 bytes with no success
-	but this should never occur on the system with unpatched EPROCESS pids
 	*/
 
 	for (int i = 0x20; i<0x200; i += 4)
