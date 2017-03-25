@@ -12,9 +12,9 @@ void modifyTaskList(UINT32 pid) {
 
 
 	// Check Architecture using pointer size
-	int * ptr;
+	INT_PTR ptr;
 
-	// Ptr size 8 if you are on a 64-bit machine, 4 if you are on a 32-bit machine
+	// Ptr size 8 if compiled for a 64-bit machine, 4 if compiled for 32-bit machine
 	LIST_OFFSET += sizeof(ptr);
 
 	// Get current process
