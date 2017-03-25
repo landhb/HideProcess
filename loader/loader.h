@@ -5,9 +5,7 @@
 #include <windows.h>
 #include <tlhelp32.h>
 #include <string.h>
-/*
-#include <ddk/wdm.h>
-#include <ddk/ntddk.h>*/
+#include <winioctl.h>
 
 
 // -----------------------------------------------------------------

