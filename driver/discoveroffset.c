@@ -5,7 +5,7 @@
 ULONG find_eprocess_pid_offset() {
 
 
-	ULONG pid_ofs = 0xFFFFFFFF; // The offset we're looking for
+	ULONG pid_ofs = 0; // The offset we're looking for
 	int idx = 0;                // Index 
 	ULONG pids[3];				// List of PIDs for our 3 processes
 	PEPROCESS eprocs[3];		// Process list, will contain 3 processes
@@ -13,7 +13,7 @@ ULONG find_eprocess_pid_offset() {
 	//Select 3 process PIDs and get their EPROCESS Pointer
 	for (int i = 16; idx<3; i += 4)
 	{
-		if (NT_SUCCESS(PsLookupProcessByProcessId((PVOID)i, &eprocs[idx])))
+		if (NT_SUCCESS(PsLookupProcessByProcessId((HANDLE)i, &eprocs[idx])))
 		{
 			pids[idx] = i;
 			idx++;

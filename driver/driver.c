@@ -16,14 +16,13 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 	PDEVICE_OBJECT deviceObject = NULL;
 	
 
-	DbgPrint("Hello World!");
 	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "DKOM: Driver loaded!\n"));
 
 	
 	// Use default dispatcher for 99.9% of IRP requests
 	for (int i = 0; i < IRP_MJ_MAXIMUM_FUNCTION; i++) {
 		DriverObject->MajorFunction[i] = defaultIrpHandler;
-	}
+	} 
 
 	// Specify the IRP requests we'll actually use
 	DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = IrpCallRootkit;
@@ -68,4 +67,3 @@ VOID DriverUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	IoDeleteDevice(DriverObject->DeviceObject);
 	return;
 }
-

