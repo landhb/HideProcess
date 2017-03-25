@@ -1,7 +1,7 @@
 #include "driver.h"
 
 // IRP code that will call our rootkit functionality
-#define IRP_ROOTKIT_CODE 0x900 
+#define IRP_ROOTKIT_CODE 0x815
 
 // Default IRP dispatcher, passthrough no action, return STATUS_SUCCESS
 NTSTATUS defaultIrpHandler(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP IrpMessage) {

