@@ -23,7 +23,9 @@ Under Debug -> [ProjectName] Properties -> Driver Settings -> General, make sure
 
 Then under Build -> Configuration Manager, make sure the Platform is Win32, and x86 is selected under "Active solution platform".
 
-Now you should be able to use Build -> Build [ProjectName] to build the project. This will generate a .sys file if everything went well. 
+Now you should be able to use Build -> Build [ProjectName] to build the project. This will generate a .sys file if everything went well. Then put the .sys file in c:\Windows\System32\drivers\[ProjectName].sys, or change the following define statement in loader.c to the path you've specified:
+
+#define DRIVER "c:\\\\Windows\\System32\\drivers\\Rootkit.sys"
 
 #### Compiling The Loader
 
