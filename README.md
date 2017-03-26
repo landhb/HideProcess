@@ -10,6 +10,8 @@ For more information on the concepts used here please check out my [article](htt
 
 Currently only works on 32bit systems. Does not bypass PatchGuard or driver signing requirements.
 
+Please use a VM whenever you run this. 
+
 #### Compiling The Driver 
 
 The driver has a number of dependencies and you'll need to compile it using msbuild or visual studio. I used Visual Studio during the development process. You'll need:
