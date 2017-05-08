@@ -50,6 +50,14 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 		IoDeleteDevice(deviceObject);
 		return status;
 	} 
+	
+	// Hook the TCPIP.sys driver
+	status = TCPHook();
+
+	if (!NT_SUCCESS(status)) {
+		IoDeleteDevice(deviceObject);
+		return status;
+	}
 
 	// Create reference to unload Driver
 	DriverObject->DriverUnload = DriverUnload;
@@ -61,9 +69,17 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 
 // Driver unload point
 VOID DriverUnload(_In_ PDRIVER_OBJECT DriverObject) {
-	UNREFERENCED_PARAMETER(DriverObject);
-	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Driver Unloaded\n"));
+	
+	// Remove the TCP hook
+	NTSTATUS status = STATUS_SUCCESS;
+	
+	status = RemoveTCPHook(DriverObject);
+
+	// Delete our driver device and the associated symbolic link 
 	IoDeleteSymbolicLink(&usSymbolicLink);
 	IoDeleteDevice(DriverObject->DeviceObject);
+
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Driver Unloaded\n"));
+
 	return;
 }
