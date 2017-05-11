@@ -53,6 +53,7 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 	
 	// Hook the TCPIP.sys driver
 	status = TCPHook();
+	//status = InstallTCPDriverHook();
 
 	if (!NT_SUCCESS(status)) {
 		IoDeleteDevice(deviceObject);
@@ -70,16 +71,23 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 // Driver unload point
 VOID DriverUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	
-	// Remove the TCP hook
+	
 	NTSTATUS status = STATUS_SUCCESS;
 	
+	// Remove the TCP hook
 	status = RemoveTCPHook(DriverObject);
+	
+	// Check to ensure the hook has been removed properly
+	if (!NT_SUCCESS(status)) {
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Hook not removed\n"));
+	}
 
 	// Delete our driver device and the associated symbolic link 
 	IoDeleteSymbolicLink(&usSymbolicLink);
 	IoDeleteDevice(DriverObject->DeviceObject);
 
 	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Driver Unloaded\n"));
+
 
 	return;
 }

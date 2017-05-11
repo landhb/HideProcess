@@ -1,19 +1,22 @@
 #include "driver.h"
 
 // tdiinfo.h was giving me a compiler warning for an unamed union
-// return warnings to normal w/ #pragma warning(default : 4201)
-#pragma warning(disable : 4201)
-#include "tdiinfo.h"
+// so I defined TDIObjectID and TDIEntityID directly
+typedef unsigned long ulong;
 
-// IoControl Code we want to filter in TCPIP.sys
-// When a program such as netstat.exe requests a list of ports/programs
-// it uses the major IRP control code IOCTL_TCP_QUERY_INFORMATION_EX
-#define IOCTL_TCP_QUERY_INFORMATION_EX 0x00120003
+//* Structure of an entity ID.
+typedef struct TDIEntityID {
+	ulong		tei_entity;
+	ulong		tei_instance;
+} TDIEntityID;
 
-
-// Macro for host to network short
-// convert port in memory to big-endian representation
-#define HTONS(a) (((0xFF&a)<<8) + ((0xFF00&a)>>8))
+//* Structure of an object ID.
+typedef struct TDIObjectID {
+	TDIEntityID	toi_entity;
+	ulong		toi_class;
+	ulong		toi_type;
+	ulong		toi_id;
+} TDIObjectID;
 
 
 // Define a type to reference the old device control function we will be 
@@ -62,7 +65,7 @@ Reference: https://msdn.microsoft.com/en-us/library/bb432493(v=vs.85).aspx
 // inputbuffer to the correct structure to parse it properly.
 
 
-// inputBuffer->toi_id == 0x102
+// inputBuffer->toi_id == 0x101
 typedef struct _CONNINFO101 {
 	unsigned long status;
 	unsigned long src_addr;
@@ -103,3 +106,4 @@ typedef struct _REQINFO {
 	PIO_COMPLETION_ROUTINE OldCompletion;
 	unsigned long          ReqType;
 } REQINFO, *PREQINFO;
+
