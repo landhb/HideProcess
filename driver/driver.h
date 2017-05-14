@@ -1,10 +1,15 @@
 #pragma once
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ntddk.h>
 #include <winapifamily.h> 
 
 
+DRIVER_INITIALIZE DriverEntry;
 
 //------------------------------------------------------------------------------
 //						Main Driver Functionality (driver.c)
@@ -57,4 +62,21 @@ NTSTATUS TCPHook();
 NTSTATUS HookCompletionRoutine(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp, _In_ PVOID Context);
 
 // Removal function, for driver unload
-NTSTATUS RemoveTCPHook(IN PDRIVER_OBJECT DriverObject);
+NTSTATUS RemoveTCPHook(_In_ PDRIVER_OBJECT DriverObject);
+
+
+//------------------------------------------------------------------------------
+//								NDIS Hook
+//------------------------------------------------------------------------------
+
+NTSTATUS BogusProtocolRegister();
+void BogusProtocolUnregister();
+
+/*
+VOID NdisprotReceiveNetBufferLists(
+	IN NDIS_HANDLE                  ProtocolBindingContext,
+	IN PNET_BUFFER_LIST             pNetBufferLists,
+	IN NDIS_PORT_NUMBER             PortNumber,
+	IN ULONG                        NumberOfNetBufferLists,
+	IN ULONG                        ReceiveFlags
+); */

