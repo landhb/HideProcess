@@ -34,8 +34,8 @@ int call_kernel_driver(char * pid, HANDLE hDevice){
         return;
     }
 
-    printf("%s\n", "[+] IRP Sent, look for your process!");
-    printf("\nReturned: %s\n", retbuf);
+    printf("[+] IRP Sent, look for your process!\n");
+    printf("\nRootkit returned '%s'\n", retbuf);
 }
 
 BOOL load_driver(SC_HANDLE svcHandle) {
