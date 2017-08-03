@@ -13,7 +13,7 @@ For more information on the concepts used here please check out my [article](htt
 
 ### Limitations
 
-Although Windows 10 x64 didn't BSOD during testing, this rootkit does not bypass PatchGuard or driver signing requirements so it's always a possibility.
+Does not bypass PatchGuard or driver signing requirements.
 
 Please use a VM whenever you run this. Current tests on Windows 10 observe it takes about 30 minutes after unlinking the process to induce a BSOD.
 
