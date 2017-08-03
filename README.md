@@ -1,18 +1,23 @@
 # HideProcess
 
+#### Update: Now works for both 64bit and 32bit architecture! Tested on: 
+
+ * Windows 10 Enterprise Edition x64 Build 15063.rs2_release.170317-1834
+ * Windows 7 SP1 x86
+
 ![Demo](https://github.com/landhb/HideProcess/blob/master/img/demo.PNG?raw=true "Demo")
 
-#### Writeup
+### Writeup
 
 For more information on the concepts used here please check out my [article](http://www.landhb.me/posts/v9eRa/a-basic-windows-dkom-rootkit-pt-1/).
 
-#### Limitations
+### Limitations
 
-Currently only works on 32bit systems. Does not bypass PatchGuard or driver signing requirements.
+Although Windows 10 x64 didn't BSOD during testing, this rootkit does not bypass PatchGuard or driver signing requirements so it's always a possibility.
 
-Please use a VM whenever you run this. 
+Please use a VM whenever you run this. Current tests on Windows 10 observe no BSOD even a full hour after unlinking the process.
 
-#### Compiling The Driver 
+### Compiling The Driver 
 
 The driver has a number of dependencies and you'll need to compile it using msbuild or visual studio. I used Visual Studio during the development process. You'll need:
 
@@ -43,7 +48,7 @@ Then you can create a 32-bit Windows executable using the makefile with:
 make 32bit
 ```
 
-And a 64-bit Windows executables with:
+And a 64-bit Windows executable with:
 
 ```
 make 64bit
