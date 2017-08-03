@@ -25,10 +25,10 @@ ULONG find_eprocess_pid_offset() {
 	Go through the EPROCESS structure and look for the PID
 	we can start at 0x20 because UniqueProcessId should
 	not be in the first 0x20 bytes,
-	also we should stop after 0x200 bytes with no success
+	also we should stop after 0x300 bytes with no success
 	*/
 
-	for (int i = 0x20; i<0x200; i += 4)
+	for (int i = 0x20; i<0x300; i += 4)
 	{
 		if ((*(ULONG *)((UCHAR *)eprocs[0] + i) == pids[0])
 			&& (*(ULONG *)((UCHAR *)eprocs[1] + i) == pids[1])
